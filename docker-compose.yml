@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+
+  angular:
+    container_name: front
+    restart: unless-stopped
+    build:
+      context: ./project
+      dockerfile: ./dockerfile
+    ports:
+      - 4200:4200
+    depends_on:
+      - "database"
+    networks:
+      - asgard
+
+  server:
+    container_name: server
+    restart: unless-stopped
+    build:
+      context: ./server
+      dockerfile: ./dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - MONGO_URL=mongodb://database/testDB
+    networks:
+      - asgard
+    depends_on:
+      - "angular"
+      - "database"
+
+  database:
+    container_name: mongo_database
+    restart: unless-stopped
+    image: mongo
+    volumes:
+      - dbdata:/var/lib/mongo
+    ports:
+      - 27018:27018
+    networks:
+      - asgard
+
+
+networks:
+  asgard:
+
+volumes:
+  dbdata:
