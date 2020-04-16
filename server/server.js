@@ -98,6 +98,89 @@ app.delete('/api/users/delete/:user_id', function(req, res) {
     });
 })
 
+var UserProfile = require('./app/models/Profile');
+
+app.get('/api/profiles', function (req, res) {
+    UserProfile.find(function (err, profiles) {
+        if (err)
+            res.send(err);
+        res.json(profiles);
+    })
+});
+
+app.post('/api/profiles/create', function (req, res) {
+    var _user = new UserProfile();
+
+    UserProfile.find({ '_id': req.body._id}, function (err, user) {
+        if (err) {
+            console.log('Signup Error');
+        }
+        if (user.length != 0) {
+            console.log('Profile already exist');
+            res.status(500).send("Profile already exist !!!");
+            return;
+        }
+        _user._id = req.body._id;
+        _user.save(function (err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'Profile created!'})
+        });
+    })
+});
+
+app.post('/api/profiles/edit/:profile_id', function (req, res) {
+    var _userProfile = new UserProfile();
+
+    UserProfile.findOneAndRemove({ '_id': req.params.profile_id}, function(err, data) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        console.log("deleted");
+    });
+
+    UserProfile.find({ '_id': req.params.profile_id }, function (err, user) {
+        if (err) {
+            console.log('ERROR');
+            return;
+        }
+        if (user.length != 0) {
+            res.status(500).send("ERROR");
+            return;
+        }
+        _userProfile._id = req.params.profile_id;
+        _userProfile.age = req.body.age;
+        _userProfile.familly = req.body.familly;
+        _userProfile.race = req.body.race;
+        _userProfile.food = req.body.food;
+        _userProfile.save(function (err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'Profile edited!'})
+        });
+    })
+});
+
+app.get('/api/profiles/:profile_id', function (req, res) {
+    UserProfile.find({ '_id': req.params.profile_id }, function (err, profile) {
+        if (err) {
+            console.log('Find Error');
+            res.status(500).send("Profile doesn't exist");
+            return;
+        }
+        if (profile.length == 0) {
+            console.log(req.body)
+            console.log('Wrong Id');
+            res.status(500).send("Profile doesn't exist");
+            return;
+        }
+
+        res.json({ message: 'Profile Found!', profile: profile[0] })
+
+    })
+});
+
 app.get('/test', function(req, res) {
     res.send("Route for testing")
 });

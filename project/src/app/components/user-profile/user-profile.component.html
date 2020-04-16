@@ -1,9 +1,38 @@
 <div class="container">
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-12" *ngIf="!this.isEdit">
             <h2 class="mb-4">Your User Information</h2>
             <p><strong>Name: {{currentUser?.name}}</strong> </p>
             <p><strong>Email: {{currentUser?.email}}</strong> </p>
+            <p><strong>Age: {{currentProfile?.age}}</strong> </p>
+            <p><strong>Familly: {{currentProfile?.familly}}</strong> </p>
+            <p><strong>Race: {{currentProfile?.race}}</strong> </p>
+            <p><strong>Food: {{currentProfile?.food}}</strong> </p>
         </div>
+    </div>
+    <div>
+        <button (click)="runEdit()" *ngIf="!this.isEdit" type="button" class="btn btn-primary">Edit profile</button>
+    </div>
+    <div class="auth-wrapper" *ngIf="this.isEdit">
+        <form class="form-register" [formGroup]="editForm" (ngSubmit)="endEdit()">
+            <h2 class="h3 mb-3 font-weight-normal text-center">Edit Profile</h2>
+            <div class="form-group">
+                <label>Age</label>
+                <input type="text" class="form-control" formControlName="age" placeholder="Enter age" required>
+            </div>
+            <div class="form-group">
+                <label>Familly</label>
+                <input type="text" class="form-control" formControlName="familly" placeholder="Enter familly" required>
+            </div>
+            <div class="form-group">
+                <label>Race</label>
+                <input type="text" class="form-control" formControlName="race" placeholder="Enter race" required>
+            </div>
+            <div class="form-group">
+                <label>Food</label>
+                <input type="text" class="form-control" formControlName="food" placeholder="Enter food" required>
+            </div>
+            <button type="submit" class="btn btn-block btn-primary">Edit !</button>
+        </form>
     </div>
 </div>

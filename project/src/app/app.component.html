@@ -300,9 +300,9 @@
 
 <!-- Toolbar -->
 <mat-toolbar color="primary" class="app-header">
-  <span class="nav-tool-items">
-    <a mat-button routerLink="login" routerLinkActive="active">Login</a>
-    <a mat-button mat-raised-button routerLink="register" routerLinkActive="active">Register</a>
+  <span class="nav-tool-items" >
+    <a mat-button *ngIf="this.authService.isNotLoggedIn()" routerLink="login" routerLinkActive="active">Login</a>
+    <a mat-button *ngIf="this.authService.isNotLoggedIn()" mat-raised-button routerLink="register" routerLinkActive="active">Register</a>
   </span>
   <div>
     <button (click)="logout()" *ngIf="this.authService.isLoggedIn()" type="button" class="btn btn-primary">Logout</button>

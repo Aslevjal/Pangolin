@@ -7,67 +7,43 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { User } from './user';
-
+import { Profile} from './profile';
 
 @Injectable({
   providedIn: 'root'
 })
+export class ProfileService {
 
-export class AuthService {
   API_URL: string = 'http://localhost:8080/api';
   headers = new HttpHeaders().set('Content-Type', 'application/json');
   currentUser = {};
 
   constructor(private httpClient: HttpClient, public router: Router) { }
 
-  register(user: User) {
+  createProfile(user: User) {
 
     // return this.httpClient.post(`${this.API_URL}/users/register`, user).pipe(
     //   catchError(this.handleError)
     // )
-    return this.httpClient.post<any>(`${this.API_URL}/users/register`, user)
+    return this.httpClient.post<any>(`${this.API_URL}/profiles/create`, user)
       .subscribe((res: any) => {
-        localStorage.setItem('userId', res._id)
         //this.getUserProfile(res._id).subscribe((res) => {
-          this.currentUser = res;
-          this.router.navigate(['profile']);
+        this.currentUser = res;
         //})
       })
   }
 
-  login(user: User) {
-    return this.httpClient.post<any>(`${this.API_URL}/users/login`, user)
+  editProfile(data: Profile, id) {
+    return this.httpClient.post<any>(`${this.API_URL}/profiles/edit/${id}`, data)
       .subscribe((res: any) => {
-        localStorage.setItem('userId', res._id)
         //this.getUserProfile(res._id).subscribe((res) => {
-          this.currentUser = res;
-          this.router.navigate(['profile']);
+        this.currentUser = res;
         //})
       })
   }
 
-  getUserId() {
-    return localStorage.getItem('userId');
-  }
-
-  isLoggedIn(): boolean {
-    let authToken = localStorage.getItem('userId');
-    return (authToken !== null) ? true : false;
-  }
-
-  isNotLoggedIn(): boolean {
-    let authToken = localStorage.getItem('userId');
-    return (authToken !== null) ? false : true;
-  }
-
-  logout() {
-    if (localStorage.removeItem('userId') == null) {
-      this.router.navigate(['login']);
-    }
-  }
-
-  getUser(id) {
-    return this.httpClient.get(`${this.API_URL}/users/${id}`, { headers: this.headers }).pipe(
+  getProfile(id) {
+    return this.httpClient.get(`${this.API_URL}/profiles/${id}`, { headers: this.headers }).pipe(
       map((res: any) => {
         return res
       }),
@@ -87,3 +63,4 @@ export class AuthService {
     return throwError(msg);
   }
 }
+
