@@ -69,6 +69,25 @@ app.post('/api/users/login', function (req, res) {
     })
 });
 
+app.get('/api/users/:user_id', function (req, res) {
+    User.find({ '_id': req.params.user_id }, function (err, user) {
+        if (err) {
+            console.log('Find Error');
+        }
+        if (user.length == 0) {
+            console.log(req.body)
+            console.log('Wrong Id');
+            res.status(500);
+        }
+        if (res.statusCode == 500) {
+            res.send("User doesn't exist");
+        } else {
+            console.log("id = " + user[0]);
+            res.json({ message: 'User Found!', user: user[0] })
+        }
+    })
+});
+
 app.delete('/api/users/delete/:user_id', function(req, res) {
     User.remove({
         _id: req.params.pangolins_id

@@ -50,7 +50,7 @@ export class AuthService {
     return localStorage.getItem('userId');
   }
 
-  get isLoggedIn(): boolean {
+  isLoggedIn(): boolean {
     let authToken = localStorage.getItem('userId');
     return (authToken !== null) ? true : false;
   }
@@ -61,14 +61,14 @@ export class AuthService {
     }
   }
 
-  // getUserProfile(id): Observable<any> {
-  //   return this.httpClient.get(`${this.API_URL}/users/profile/${id}`, { headers: this.headers }).pipe(
-  //     map((res: Response) => {
-  //       return res || {}
-  //     }),
-  //     catchError(this.handleError)
-  //   )
-  // }
+  getUser(id) {
+    return this.httpClient.get(`${this.API_URL}/users/${id}`, { headers: this.headers }).pipe(
+      map((res: any) => {
+        return res
+      }),
+      catchError(this.handleError)
+    )
+  }
 
   handleError(error: HttpErrorResponse) {
     let msg = '';
