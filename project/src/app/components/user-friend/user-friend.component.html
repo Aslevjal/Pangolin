@@ -1,4 +1,26 @@
-<p>user-friend works!</p>
+<div class="container">
+    <h1>Friend List</h1>
+
+    <label>Friend:</label>
+    <li *ngFor="let web of default">
+        {{web.name}}
+    </li>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+
+        <div class="form-group">
+            <label for="website">User:</label>
+            <div *ngFor="let web of websiteList">
+                <label>
+                    <input type="checkbox" [value]="web._id" (change)="onCheckboxChange($event)" [name]="web.name" />
+                    {{web.name}}
+                </label>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit" [disabled]="!form.valid">Submit</button>
+    </form>
+</div>
 <div>
     <button (click)="this.router.navigate(['profile'])" type="button" class="btn btn-primary">return</button>
 </div>

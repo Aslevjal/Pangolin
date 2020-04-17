@@ -184,6 +184,7 @@ app.get('/api/profiles/:profile_id', function (req, res) {
 var UserFriend = require('./app/models/Friend');
 
 app.get('/api/friends/:profile_id', function (req, res) {
+    var _userFriend = new UserFriend();
     UserFriend.find({ '_id': req.params.profile_id }, function (err, profile) {
         if (err) {
             console.log('Find Error');
@@ -193,25 +194,22 @@ app.get('/api/friends/:profile_id', function (req, res) {
         if (profile.length == 0) {
             console.log(req.body)
             console.log('Wrong Id');
-            res.status(500).send("Friend List doesn't exist");
+            _userFriend._id = req.params.profile_id;
+            _userFriend.save(function (err) {
+                if (err)
+                    res.send(err);
+                res.json({ message: 'Created !!!', friends: profile[0] })
+            });
             return;
         }
 
-        res.json({ message: 'Friend List Found!', profile: profile[0] })
+        res.json({ message: 'Friend List Found!', friends: profile[0] })
 
     })
 });
 
-app.post('/api/profiles/edit/:profile_id', function (req, res) {
+app.post('/api/friends/edit/:profile_id', function (req, res) {
     var _userFriend = new UserFriend();
-
-    UserFriend.findOneAndRemove({ '_id': req.params.profile_id }, function (err, data) {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        console.log("deleted");
-    });
 
     UserFriend.find({ '_id': req.params.profile_id }, function (err, user) {
         if (err) {
@@ -223,13 +221,33 @@ app.post('/api/profiles/edit/:profile_id', function (req, res) {
             return;
         }
         _userFriend._id = req.params.profile_id;
-        _userFriend._id = req.body.friends;
+        _userFriend.friends = req.body.website;
+        console.log(req.body.website);
         _userFriend.save(function (err) {
             if (err)
                 res.send(err);
             res.json({ message: 'Friend List edited!' })
         });
     })
+});
+
+app.get('/api/friends', function (req, res) {
+    UserFriend.find(function (err, pangolins) {
+        if (err)
+            res.send(err);
+        res.json(pangolins);
+    })
+});
+
+app.post('/api/friends/delete/:profile_id', function (req, res) {
+    UserFriend.findOneAndRemove({ '_id': req.params.profile_id }, function (err, data) {
+        if (err) {
+            console.log(err);
+            res.status(500).send("ERROR Delete");
+            return;
+        }
+        res.status(200).send("Delete Success");
+    });
 });
 
 app.get('/test', function(req, res) {

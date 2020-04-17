@@ -32,6 +32,14 @@ export class FriendService {
   //       //})
   //     })
   // }
+  getAllUser() {
+    return this.httpClient.get(`${this.API_URL}/users`, { headers: this.headers }).pipe(
+      map((res: any) => {
+        return res
+      }),
+      catchError(this.handleError)
+    )
+  }
 
   editFriendList(data: Friends, id) {
     return this.httpClient.post<any>(`${this.API_URL}/friends/edit/${id}`, data)
@@ -42,7 +50,16 @@ export class FriendService {
       })
   }
 
-  getProfile(id) {
+  delFriendList(id) {
+    return this.httpClient.post<any>(`${this.API_URL}/friends/delete/${id}`, { headers: this.headers })
+      .subscribe((res: any) => {
+        //this.getUserProfile(res._id).subscribe((res) => {
+        this.currentUser = res;
+        //})
+      })
+  }
+
+  getFriendList(id) {
     return this.httpClient.get(`${this.API_URL}/friends/${id}`, { headers: this.headers }).pipe(
       map((res: any) => {
         return res
