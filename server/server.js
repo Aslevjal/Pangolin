@@ -22,6 +22,14 @@ app.get('/api/users', function(req, res) {
     }) 
 });
 
+app.get('/api/user/:email', function (req, res) {
+    User.find({ 'email': req.params.email }, function (err, pangolins) {
+        if (err)
+            res.send(err);
+        res.json(pangolins);
+    })
+});
+
 app.post('/api/users/register', function(req, res) {
     var id = crypto.randomBytes(16).toString("hex");
     var _user = new User();
@@ -231,6 +239,29 @@ app.post('/api/friends/edit/:profile_id', function (req, res) {
     })
 });
 
+app.post('/api/newfriends/edit/:profile_id', function (req, res) {
+    var _userFriend = new UserFriend();
+
+    UserFriend.find({ '_id': req.params.profile_id }, function (err, user) {
+        if (err) {
+            console.log('ERROR');
+            return;
+        }
+        console.log("test= ", req.body.friends);
+        if (user.length != 0) {
+            res.status(500).send("ERROR");
+            return;
+        }
+        _userFriend._id = req.params.profile_id;
+        _userFriend.friends = req.body.friends;
+        _userFriend.save(function (err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'Friend List edited!' })
+        });
+    })
+});
+
 app.get('/api/friends', function (req, res) {
     UserFriend.find(function (err, pangolins) {
         if (err)
@@ -248,6 +279,68 @@ app.post('/api/friends/delete/:profile_id', function (req, res) {
         }
         res.status(200).send("Delete Success");
     });
+});
+
+var NewFriends = require('./app/models/newFriends');
+
+app.get('/api/newfriends/:profile_id', function (req, res) {
+    var _userFriend = new NewFriends();
+    NewFriends.find({ '_id': req.params.profile_id }, function (err, profile) {
+        if (err) {
+            console.log('Find Error');
+            res.status(500).send("Friend List doesn't exist");
+            return;
+        }
+        if (profile.length == 0) {
+            console.log(req.body)
+            console.log('Test call');
+            _userFriend._id = req.params.profile_id;
+            _userFriend.save(function (err) {
+                if (err)
+                    res.send(err);
+                res.json({ message: 'Created !!!', friends: profile[0] })
+            });
+            return;
+        }
+
+        res.json({ message: 'New Friend List Found!', friends: profile[0] })
+
+    })
+});
+
+app.post('/api/newfriends/delete/:profile_id', function (req, res) {
+    NewFriends.findOneAndRemove({ '_id': req.params.profile_id }, function (err, data) {
+        if (err) {
+            console.log(err);
+            res.status(500).send("ERROR Delete");
+            return;
+        }
+        res.status(200).send("Delete Success");
+    });
+});
+
+
+app.post('/api/newfriends/edit/:profile_id', function (req, res) {
+    var _userFriend = new NewFriends();
+
+    NewFriends.find({ '_id': req.params.profile_id }, function (err, user) {
+        if (err) {
+            console.log('ERROR');
+            return;
+        }
+        if (user.length != 0) {
+            res.status(500).send("ERROR");
+            return;
+        }
+        _userFriend._id = req.params.profile_id;
+        _userFriend.newfriends = req.body;
+        console.log(req.body);
+        _userFriend.save(function (err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'NewFriends List edited!' })
+        });
+    })
 });
 
 app.get('/test', function(req, res) {

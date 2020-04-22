@@ -50,6 +50,16 @@ export class FriendService {
       })
   }
 
+  editFriendListNew(data: Friends, id) {
+    console.log(data.friends);
+    return this.httpClient.post<any>(`${this.API_URL}/newfriends/edit/${id}`, data)
+      .subscribe((res: any) => {
+        //this.getUserProfile(res._id).subscribe((res) => {
+        this.currentUser = res;
+        //})
+      })
+  }
+
   delFriendList(id) {
     return this.httpClient.post<any>(`${this.API_URL}/friends/delete/${id}`, { headers: this.headers })
       .subscribe((res: any) => {
@@ -61,6 +71,43 @@ export class FriendService {
 
   getFriendList(id) {
     return this.httpClient.get(`${this.API_URL}/friends/${id}`, { headers: this.headers }).pipe(
+      map((res: any) => {
+        return res
+      }),
+      catchError(this.handleError)
+    )
+  }
+
+  getUser(email) {
+    return this.httpClient.get(`${this.API_URL}/user/${email}`, { headers: this.headers }).pipe(
+      map((res: any) => {
+        return res
+      }),
+      catchError(this.handleError)
+    )
+  }
+
+
+  editNewFriendList(data: any[], id) {
+    return this.httpClient.post<any>(`${this.API_URL}/newfriends/edit/${id}`, data)
+      .subscribe((res: any) => {
+        //this.getUserProfile(res._id).subscribe((res) => {
+        this.currentUser = res;
+        //})
+      })
+  }
+
+  delNewFriendList(id) {
+    return this.httpClient.post<any>(`${this.API_URL}/newfriends/delete/${id}`, { headers: this.headers })
+      .subscribe((res: any) => {
+        //this.getUserProfile(res._id).subscribe((res) => {
+        this.currentUser = res;
+        //})
+      })
+  }
+
+  getNewFriendList(id) {
+    return this.httpClient.get(`${this.API_URL}/newfriends/${id}`, { headers: this.headers }).pipe(
       map((res: any) => {
         return res
       }),

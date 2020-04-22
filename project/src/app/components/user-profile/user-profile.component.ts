@@ -47,6 +47,7 @@ export class UserProfileComponent implements OnInit {
   endEdit() {
     this.profileService.editProfile(this.editForm.value, this.id);
     this.isEdit = false;
+    window.location.reload();
   }
 
   ngOnInit() { }

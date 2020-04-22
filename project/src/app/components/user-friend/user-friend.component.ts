@@ -16,19 +16,20 @@ import { of } from 'rxjs';
 })
 export class UserFriendComponent implements OnInit {
   form: FormGroup;
+  form2: FormGroup;
   default: [];
-  websiteList: any = [
-    { id: 1, name: 'ItSolutionStuff.com' },
-    { id: 2, name: 'HDTuto.com' },
-    { id: 3, name: 'NiceSnippets.com' }
-  ];
+  newFriends: [];
+  postNewFriend: [];
+  websiteList: [];
   id: String;
+  NewFriends: FormGroup;
 
   constructor(public router: Router,
     public friendService: FriendService,
     private formBuilder: FormBuilder,
     public authService: AuthService)
   {
+    this.NewFriends = this.formBuilder.group({ email: ['']});
     this.id = this.authService.getUserId();
     this.friendService.getAllUser().subscribe(res => {
       console.log(res)
@@ -37,9 +38,12 @@ export class UserFriendComponent implements OnInit {
         console.log(res);
         this.default = res.friends.friends;
         this.form = this.formBuilder.group({
-          website: this.formBuilder.array([], [Validators.required])
+          website: this.formBuilder.array([])
         }) 
       });
+      this.friendService.getNewFriendList(this.id).subscribe(res => {
+        this.newFriends = res.friends.newfriends;
+      })
     });
     
   }
@@ -59,6 +63,38 @@ export class UserFriendComponent implements OnInit {
     console.log(this.form.value);
     this.friendService.delFriendList(this.id);
     this.friendService.editFriendList(this.form.value, this.id);
+    window.location.reload();
+  }
+
+  validNewFriends() {
+    console.log(this.NewFriends.value.email);
+    var a = [];
+    a.push(this.NewFriends.value.email)
+    this.newFriends.forEach(element => {
+      if (element != null)
+        a.push(element);
+    });
+    console.log(a);
+    this.friendService.delNewFriendList(this.id);
+    this.friendService.editNewFriendList(a, this.id);
+    window.location.reload();
+  }
+
+  updateNewFriend() {
+    const website: Friends = {_id: this.id, friends: []};
+    this.newFriends.forEach(element => {
+      this.friendService.getUser(element).subscribe(res => {
+        if (res[0]) {
+          website.friends.push({ _id: res[0]._id, name: res[0].name });
+        }
+      });
+    });
+    this.default.forEach(element => {
+      website.friends.push(element);
+    });
+    console.log(website);
+    this.friendService.delFriendList(this.id);
+    this.friendService.editFriendListNew(website, this.id);
   }
 
   return() {
