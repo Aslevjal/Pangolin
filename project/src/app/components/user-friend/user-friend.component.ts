@@ -81,20 +81,27 @@ export class UserFriendComponent implements OnInit {
   }
 
   updateNewFriend() {
-    const website: Friends = {_id: this.id, friends: []};
+    const arr: Friends = {_id: this.id, friends: []};
+    this.default.forEach(element => {
+      arr.friends.push(element);
+    });
+    var i = 0;
     this.newFriends.forEach(element => {
       this.friendService.getUser(element).subscribe(res => {
         if (res[0]) {
-          website.friends.push({ _id: res[0]._id, name: res[0].name });
+          arr.friends.push({ _id: res[0]._id, name: res[0].name });
+          console.log(arr);
+          this.friendService.delFriendList(this.id);
+          this.friendService.editFriendListNew(arr, this.id);
+        }
+        i = i +1;
+        if (i == this.newFriends.length) {
+          this.friendService.delNewFriendList(this.id);
+          this.friendService.editNewFriendList([], this.id);
+          window.location.reload();
         }
       });
     });
-    this.default.forEach(element => {
-      website.friends.push(element);
-    });
-    console.log(website);
-    this.friendService.delFriendList(this.id);
-    this.friendService.editFriendListNew(website, this.id);
   }
 
   return() {

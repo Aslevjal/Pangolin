@@ -230,30 +230,6 @@ app.post('/api/friends/edit/:profile_id', function (req, res) {
         }
         _userFriend._id = req.params.profile_id;
         _userFriend.friends = req.body.website;
-        console.log(req.body.website);
-        _userFriend.save(function (err) {
-            if (err)
-                res.send(err);
-            res.json({ message: 'Friend List edited!' })
-        });
-    })
-});
-
-app.post('/api/newfriends/edit/:profile_id', function (req, res) {
-    var _userFriend = new UserFriend();
-
-    UserFriend.find({ '_id': req.params.profile_id }, function (err, user) {
-        if (err) {
-            console.log('ERROR');
-            return;
-        }
-        console.log("test= ", req.body.friends);
-        if (user.length != 0) {
-            res.status(500).send("ERROR");
-            return;
-        }
-        _userFriend._id = req.params.profile_id;
-        _userFriend.friends = req.body.friends;
         _userFriend.save(function (err) {
             if (err)
                 res.send(err);
@@ -298,7 +274,7 @@ app.get('/api/newfriends/:profile_id', function (req, res) {
             _userFriend.save(function (err) {
                 if (err)
                     res.send(err);
-                res.json({ message: 'Created !!!', friends: profile[0] })
+                res.json({ friends: profile[0] })
             });
             return;
         }
@@ -334,7 +310,29 @@ app.post('/api/newfriends/edit/:profile_id', function (req, res) {
         }
         _userFriend._id = req.params.profile_id;
         _userFriend.newfriends = req.body;
-        console.log(req.body);
+        _userFriend.save(function (err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'NewFriends List edited!' })
+        });
+    })
+});
+
+app.post('/api/friendsnew/edit/:profile_id', function (req, res) {
+    var _userFriend = new UserFriend();
+
+    UserFriend.find({ '_id': req.params.profile_id }, function (err, user) {
+        if (err) {
+            console.log('ERROR');
+            return;
+        }
+        if (user.length != 0) {
+            res.status(500).send("ERROR");
+            return;
+        }
+        _userFriend._id = req.params.profile_id;
+        _userFriend.friends = req.body.friends;
+        console.log(req.body.friends);
         _userFriend.save(function (err) {
             if (err)
                 res.send(err);

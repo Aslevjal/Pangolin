@@ -42,6 +42,7 @@ export class FriendService {
   }
 
   editFriendList(data: Friends, id) {
+    console.log(data.friends);
     return this.httpClient.post<any>(`${this.API_URL}/friends/edit/${id}`, data)
       .subscribe((res: any) => {
         //this.getUserProfile(res._id).subscribe((res) => {
@@ -52,7 +53,7 @@ export class FriendService {
 
   editFriendListNew(data: Friends, id) {
     console.log(data.friends);
-    return this.httpClient.post<any>(`${this.API_URL}/newfriends/edit/${id}`, data)
+    return this.httpClient.post<any>(`${this.API_URL}/friendsnew/edit/${id}`, data)
       .subscribe((res: any) => {
         //this.getUserProfile(res._id).subscribe((res) => {
         this.currentUser = res;
